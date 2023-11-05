@@ -31,33 +31,7 @@ type Config struct {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /configs [get]
 func getConfigs(c echo.Context) error {
-	var configs []Config
-	companies, err := models.GetCompanies()
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: err.Error(),
-		})
-	}
-
-	for _, company := range companies {
-		preset, err := models.GetPresetsByCompanyID(company.ID)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-				Error: err.Error(),
-			})
-		}
-
-		config := Config{
-			CompanyName: company.Name,
-			Industry:    company.Industry,
-			City:        company.City,
-			Presets:     preset,
-		}
-
-		configs = append(configs, config)
-	}
-
-	return c.JSON(http.StatusOK, configs)
+	return c.JSON(http.StatusOK, config.Configs)
 }
 
 // From the iPad sets the current company with values

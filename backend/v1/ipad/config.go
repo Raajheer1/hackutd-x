@@ -82,6 +82,8 @@ func setActiveConfig(c echo.Context) error {
 	wg.Wait()
 
 	config.Recs = cont.recs
+	data.Weights = nil
+	data.BaselineRisk = 0
 
 	return c.JSON(http.StatusOK, dto.MessageResponse{
 		Message: "Active config updated successfully",
@@ -103,6 +105,24 @@ func getActiveConfig(c echo.Context) error {
 	o.RiskValue = data.CalculateRisk()
 	o.ZValue = data.CalculateZ()
 	o.BankruptcyRisk = data.Situation(o.ZValue)
+	if o.ZValue < 1.23 {
+		added := false
+		for _, rec := range config.Recs {
+			if rec.Title == "Get Liability Insurance" {
+				added = true
+			}
+		}
+		if !added {
+			config.Recs = append(config.Recs, config.Recommendation{
+				Title:     "Get Liability Insurance",
+				Summary:   "Protect Against the Unexpected: Liability Insurance as Your Business Safety Net",
+				Details:   "For small businesses navigating financial challenges, liability insurance is a critical tool for risk management. It offers protection against the high costs associated with legal claims and lawsuits, which can be the difference between survival and closure. When facing potential bankruptcy, liability insurance acts as a shield, guarding your hard-earned business against the threats that could exacerbate financial strain.",
+				Type:      "Legal",
+				Weight:    1,
+				Completed: false,
+			})
+		}
+	}
 
 	return c.JSON(http.StatusOK, o)
 }

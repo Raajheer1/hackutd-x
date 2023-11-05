@@ -31,7 +31,7 @@ func GetRecommendation(msg string, category config.RecommendationTypes) []Recomm
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleSystem,
-					Content: fmt.Sprintf("You are a recommendation assistant API that returns JSON ONLY. I am going to give you a company and you need to provide me a list of 2 recommendations related to %s to decrease overall risk for that company additionally you need to weight on a scale of 0-1 how critical that recommendation is with 1 being very critical. Return a list of JSON recommendations with the keys: 'title', 'summary', 'details', 'weight'. Return JSON only.", category),
+					Content: fmt.Sprintf("You are a recommendation assistant API that returns JSON ONLY. I am going to give you a company and you need to provide me a list of 2 recommendations related to %s to decrease overall risk for that company additionally you need to weight on a scale of 0-1 how critical that recommendation is with 1 being very critical, the weights should sum to 1. Return a list of JSON recommendations with the keys: 'title', 'summary', 'details', 'weight'. Return JSON only.", category),
 				},
 				{
 					Role:    openai.ChatMessageRoleUser,
@@ -118,6 +118,10 @@ type RiskResponseTwo struct {
 	RiskWeights []RiskResponse `json:"risk_weights"`
 }
 
+type RiskResponseThree struct {
+	RiskWeights []RiskResponse `json:"risk_factors"`
+}
+
 func GetRiskWeights(age uint, industry string) []RiskResponse {
 	client := openai.NewClient(os.Getenv("CHATGPT_API_KEY"))
 
@@ -177,40 +181,45 @@ func GetRiskWeights(age uint, industry string) []RiskResponse {
 	response := resp.Choices[0].Message.Content
 	err = json.Unmarshal([]byte(response), &riskWeights)
 	if err != nil {
-		fmt.Println("ChatCompletion error: Failing back to method 2")
+		fmt.Println("Weight ChatCompletion error: Failing back to method 2")
+		fmt.Println(response)
 		var recs RiskResponseTwo
 		err = json.Unmarshal([]byte(response), &recs)
 		if err != nil {
-			fmt.Printf("ChatCompletion error: %v\n", err)
-			fmt.Printf("Given response:\n %s\n\n", response)
-			return []RiskResponse{
-				{
-					RiskFactor: "Finance",
-					RiskWeight: 0.5,
-				},
-				{
-					RiskFactor: "Safety",
-					RiskWeight: 0.1,
-				},
-				{
-					RiskFactor: "Security Measures",
-					RiskWeight: 0.1,
-				},
-				{
-					RiskFactor: "Accident History",
-					RiskWeight: 0.1,
-				},
-				{
-					RiskFactor: "Employee Training",
-					RiskWeight: 0.1,
-				},
-				{
-					RiskFactor: "Legal",
-					RiskWeight: 0.1,
-				},
+			fmt.Println("Weight ChatCompletion error: Failing back to method 3")
+			var recs RiskResponseThree
+			err = json.Unmarshal([]byte(response), &recs)
+			if err != nil {
+				fmt.Printf("Weight ChatCompletion error: %v\n", err)
+				fmt.Printf("Given response:\n %s\n\n", response)
+				return []RiskResponse{
+					{
+						RiskFactor: "Finance",
+						RiskWeight: 0.5,
+					},
+					{
+						RiskFactor: "Safety",
+						RiskWeight: 0.1,
+					},
+					{
+						RiskFactor: "Security Measures",
+						RiskWeight: 0.1,
+					},
+					{
+						RiskFactor: "Accident History",
+						RiskWeight: 0.1,
+					},
+					{
+						RiskFactor: "Employee Training",
+						RiskWeight: 0.1,
+					},
+					{
+						RiskFactor: "Legal",
+						RiskWeight: 0.1,
+					},
+				}
 			}
 		}
-		fmt.Println(recs.RiskWeights)
 		return recs.RiskWeights
 	}
 

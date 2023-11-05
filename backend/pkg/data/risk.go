@@ -53,7 +53,7 @@ func RiskScoreFormula(baseline float64, risks []Risk, tasks []Task) float64 {
 
 	limitedZScore := InvertZ(CalculateZ()) * 25
 	fmt.Printf("Baseline: %f, RiskScore: %f, TaskScore: %f, ZScore: %f\n", baseline*50, riskScore, taskScore, limitedZScore)
-	r := 0.25*(baseline*50) + 0.25*2*(riskScore-taskScore) + 0.50*(limitedZScore)
+	r := 0.10*(baseline*50) + 0.25*2*(riskScore-taskScore) + 0.65*(limitedZScore)
 
 	BaselineWeight = baseline * 50
 	RecWeight = (riskScore - taskScore) * 2

@@ -11,7 +11,7 @@
         'bg-clr-good':
           props.actionItem.type == 'default' ||
           props.actionItem.type == 'saftey' ||
-          props.actionItem.type == 'financial',
+          props.actionItem.type == 'finance',
         'bg-clr-mid': props.actionItem.type == 'tax',
         'bg-clr-bad': props.actionItem.type == 'legal',
       }"
@@ -33,7 +33,7 @@
       <BankIcon
         :size="35"
         color="white"
-        v-if="props.actionItem.type == 'financial'"
+        v-if="props.actionItem.type == 'finance'"
       />
       <ConeIcon
         :size="33"

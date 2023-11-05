@@ -36,5 +36,8 @@ func InvertZ(z float64) float64 {
 	if z > 4 {
 		return 0
 	}
+	if z < 0 {
+		return 4
+	}
 	return 4 - z
 }

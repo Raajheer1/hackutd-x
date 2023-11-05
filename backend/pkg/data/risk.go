@@ -50,7 +50,7 @@ func RiskScoreFormula(baseline float64, risks []Risk, tasks []Task) float64 {
 
 	limitedZScore := InvertZ(CalculateZ()) * 25
 	fmt.Printf("Baseline: %f, RiskScore: %f, TaskScore: %f, ZScore: %f\n", baseline*50, riskScore, taskScore, limitedZScore)
-	r := 0.25*(baseline*50) + 0.5*(riskScore-taskScore) - 0.25*(limitedZScore)
+	r := 0.25*(baseline*50) + 0.25*(riskScore-taskScore) - 0.50*(limitedZScore)
 
 	if r <= 0 {
 		return rand.Float64() * 10

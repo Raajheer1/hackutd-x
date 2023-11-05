@@ -37,7 +37,7 @@ var Configs []ActiveConfig = []ActiveConfig{
 	{
 		//company that is doing exceptional
 		CompanyName:        "Sue's Bakery",
-		PresetLevel:        "Low Risk",
+		PresetLevel:        "Low Financial Risk",
 		Industry:           "Bakery",
 		City:               "Southlake",
 		Revenue:            float64(800000),
@@ -54,7 +54,7 @@ var Configs []ActiveConfig = []ActiveConfig{
 	{
 		//company that is doing Average
 		CompanyName:        "Sue's Bakery",
-		PresetLevel:        "Possible Risk",
+		PresetLevel:        "Possible Financial Risk",
 		Industry:           "Bakery",
 		City:               "Southlake",
 		Revenue:            float64(800000),
@@ -71,7 +71,7 @@ var Configs []ActiveConfig = []ActiveConfig{
 	{
 		//company that is doing Average
 		CompanyName:        "Sue's Bakery",
-		PresetLevel:        "High Risk",
+		PresetLevel:        "High Financial Risk",
 		Industry:           "Bakery",
 		City:               "Southlake",
 		Revenue:            float64(800000),
@@ -88,7 +88,7 @@ var Configs []ActiveConfig = []ActiveConfig{
 	{
 		//company that is doing really bad
 		CompanyName:        "Joe's Plumbing",
-		PresetLevel:        "High Risk",
+		PresetLevel:        "High Financial Risk",
 		Industry:           "Plumbing",
 		City:               "Richardson",
 		Revenue:            float64(400000),
@@ -105,7 +105,7 @@ var Configs []ActiveConfig = []ActiveConfig{
 	{
 		//company that is going middle-of-the-road well
 		CompanyName:        "Bob's Electrician Shop",
-		PresetLevel:        "Possible Risk",
+		PresetLevel:        "Possible Financial Risk",
 		Industry:           "Electrician",
 		City:               "Dallas",
 		Revenue:            float64(650000),

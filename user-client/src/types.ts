@@ -30,6 +30,9 @@ export type CompanyConfig = {
   riskValue: number;
   zValue: number;
   bankruptcyRisk: string;
+  weightedBankruptcy: number;
+  weightedBaseline: number;
+  weightedRecs: number;
   active: CompanyConfigValues;
 };
 

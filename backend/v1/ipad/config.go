@@ -8,6 +8,7 @@ import (
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/echo/dto"
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/gpt"
 	"github.com/labstack/echo/v4"
+	"github.com/sashabaranov/go-openai"
 	"net/http"
 	"sync"
 )
@@ -169,4 +170,16 @@ func toggleRecommendation(c echo.Context) error {
 
 func timeSeriesBeauty(c echo.Context) error {
 	return nil
+}
+
+func ChatCompletion(c echo.Context) error {
+	var req []openai.ChatCompletionMessage
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
+			Error: err.Error(),
+		})
+	}
+
+	resp := gpt.Conversation(req)
+	return c.JSON(http.StatusOK, resp)
 }

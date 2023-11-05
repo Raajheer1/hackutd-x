@@ -216,3 +216,27 @@ func GetRiskWeights(age uint, industry string) []RiskResponse {
 
 	return riskWeights
 }
+
+func Conversation(pastMessages []openai.ChatCompletionMessage) []openai.ChatCompletionMessage {
+	client := openai.NewClient(os.Getenv("CHATGPT_API_KEY"))
+
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: openai.GPT3Dot5Turbo,
+			Messages: append([]openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: "You are a Insurance Agent at State Farm here to help answer questions and provide guidance to your clients.",
+				},
+			}, pastMessages...),
+		},
+	)
+
+	if err != nil {
+		fmt.Printf("ChatCompletion error: %v\n", err)
+		return nil
+	}
+
+	return append(pastMessages, resp.Choices[0].Message)
+}

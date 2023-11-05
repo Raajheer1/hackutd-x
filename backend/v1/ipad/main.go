@@ -9,4 +9,6 @@ func Routes(r *echo.Group) {
 
 	r.GET("/recommendations", getRecommendations)
 	r.POST("/toggle-recommendation", toggleRecommendation)
+
+	r.POST("/chat", ChatCompletion)
 }

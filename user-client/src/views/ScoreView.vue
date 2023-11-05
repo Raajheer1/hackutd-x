@@ -7,7 +7,10 @@
       <div
         class="flex flex-col justify-center items-center -mb-[180px]"
       >
-        <div v-if="scoreLoading" class="m-auto h-[140px]">
+        <div
+          v-if="scoreLoading || activeConfig.riskValue == -1"
+          class="m-auto h-[140px]"
+        >
           <LoadingIcon />
         </div>
         <div v-else>
@@ -48,7 +51,9 @@
       >
         Do these to increase your score
       </div>
-      <div class="flex flex-col h-[550px] overflow-y-auto">
+      <div
+        class="flex flex-col h-[550px] overflow-y-auto pb-[50px]"
+      >
         <div
           v-if="
             reccomendationsLoading ||

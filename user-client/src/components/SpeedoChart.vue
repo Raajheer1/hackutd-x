@@ -20,7 +20,7 @@ const props = defineProps({
   },
 });
 const data = {
-  labels: ["Red", "Yellow", "Blue"],
+  // labels: ["Red", "Yellow", "Blue"],
   datasets: [
     {
       label: "My First Dataset",

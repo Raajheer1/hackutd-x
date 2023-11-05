@@ -76,8 +76,6 @@ func setActiveConfig(c echo.Context) error {
 
 	config.Active = req
 
-	// TODO - call GPT-3 to get recommendations
-	// Recommendation types: Safety, Tax, Finance, Marketing, Legal
 	prompt := fmt.Sprintf("Company: %s, Industry: %s, City: %s", config.Active.CompanyName, config.Active.Industry, config.Active.City)
 
 	cont := container{
@@ -99,14 +97,16 @@ func setActiveConfig(c echo.Context) error {
 					Summary:   r.Summary,
 					Details:   r.Details,
 					Type:      string(rec),
+					Weight:    r.Weight,
 					Completed: false,
 				})
 				cont.mu.Unlock()
 			}
 		}(rec)
 	}
-
 	wg.Wait()
+
+	config.Recs = cont.recs
 
 	return c.JSON(http.StatusOK, dto.MessageResponse{
 		Message: "Active config updated successfully",
@@ -116,9 +116,10 @@ func setActiveConfig(c echo.Context) error {
 // For the user show the current config
 
 type overall struct {
-	RiskValue float64             `json:"riskValue"`
-	ZValue    float64             `json:"zValue"`
-	Active    config.ActiveConfig `json:"active"`
+	RiskValue      float64             `json:"riskValue"`
+	ZValue         float64             `json:"zValue"`
+	BankruptcyRisk string              `json:"bankruptcyRisk"`
+	Active         config.ActiveConfig `json:"active"`
 }
 
 func getActiveConfig(c echo.Context) error {
@@ -126,8 +127,9 @@ func getActiveConfig(c echo.Context) error {
 	o.Active = config.Active
 	o.RiskValue = data.CalculateRisk()
 	o.ZValue = data.CalculateZ()
+	o.BankruptcyRisk = data.Situation(o.ZValue)
 
-	return c.JSON(http.StatusOK, config.Active)
+	return c.JSON(http.StatusOK, o)
 }
 
 // For the user show all the recommendations
@@ -143,7 +145,7 @@ type CompleteRecommendationRequest struct {
 	Title string `json:"title"`
 }
 
-func completeRecommendation(c echo.Context) error {
+func toggleRecommendation(c echo.Context) error {
 	var req CompleteRecommendationRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
@@ -153,7 +155,7 @@ func completeRecommendation(c echo.Context) error {
 
 	for i, rec := range config.Recs {
 		if rec.Title == req.Title {
-			config.Recs[i].Completed = true
+			config.Recs[i].Completed = !config.Recs[i].Completed
 			return c.JSON(http.StatusOK, dto.MessageResponse{
 				Message: "Recommendation updated successfully",
 			})

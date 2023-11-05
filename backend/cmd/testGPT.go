@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/config"
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/gpt"
+	"github.com/joho/godotenv"
+	"log"
 	"sync"
 )
 
@@ -13,6 +15,10 @@ type container struct {
 }
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	fmt.Println("Im online...")
 
 	config.Active = config.ActiveConfig{
@@ -31,43 +37,48 @@ func main() {
 		YearsInBusiness:    uint(5),
 	}
 
-	// TODO - call GPT-3 to get recommendations
-	// Recommendation types: Safety, Tax, Finance, Marketing, Legal
-	prompt := fmt.Sprintf("Company: %s, Industry: %s, City: %s", config.Active.CompanyName, config.Active.Industry, config.Active.City)
+	//prompt := fmt.Sprintf("Company: %s, Industry: %s, City: %s", config.Active.CompanyName, config.Active.Industry, config.Active.City)
+	//
+	//cont := container{
+	//	recs: []config.Recommendation{},
+	//}
+	//
+	//var wg = &sync.WaitGroup{}
+	//for _, rec := range config.RecTypes {
+	//
+	//	rec := rec
+	//	wg.Add(1)
+	//	go func(recType config.RecommendationTypes) {
+	//		defer wg.Done()
+	//		resp := gpt.GetRecommendation(prompt, recType)
+	//		for _, r := range resp {
+	//			cont.mu.Lock()
+	//			cont.recs = append(cont.recs, config.Recommendation{
+	//				Title:     r.Title,
+	//				Summary:   r.Summary,
+	//				Details:   r.Details,
+	//				Type:      string(rec),
+	//				Completed: false,
+	//			})
+	//			cont.mu.Unlock()
+	//		}
+	//	}(rec)
+	//}
+	//
+	//wg.Wait()
+	//
+	//fmt.Println(len(cont.recs))
+	//for _, rec := range cont.recs {
+	//	fmt.Println(rec.Title)
+	//	fmt.Println(rec.Summary)
+	//	fmt.Println(rec.Details)
+	//	fmt.Println("----")
+	//}
 
-	cont := container{
-		recs: []config.Recommendation{},
-	}
+	resp := gpt.GetRiskWeights(config.Active.YearsInBusiness, config.Active.Industry)
 
-	var wg = &sync.WaitGroup{}
-	for _, rec := range config.RecTypes {
-
-		rec := rec
-		wg.Add(1)
-		go func(recType config.RecommendationTypes) {
-			defer wg.Done()
-			resp := gpt.GetRecommendation(prompt, recType)
-			for _, r := range resp {
-				cont.mu.Lock()
-				cont.recs = append(cont.recs, config.Recommendation{
-					Title:     r.Title,
-					Summary:   r.Summary,
-					Details:   r.Details,
-					Type:      string(rec),
-					Completed: false,
-				})
-				cont.mu.Unlock()
-			}
-		}(rec)
-	}
-
-	wg.Wait()
-
-	fmt.Println(len(cont.recs))
-	for _, rec := range cont.recs {
-		fmt.Println(rec.Title)
-		fmt.Println(rec.Summary)
-		fmt.Println(rec.Details)
-		fmt.Println("----")
+	for _, res := range resp {
+		fmt.Println(res.RiskFactor)
+		fmt.Println(res.RiskWeight)
 	}
 }

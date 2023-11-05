@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Raajheer1/hackutd-x/m/v2/pkg/database"
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/echo"
 	"github.com/Raajheer1/hackutd-x/m/v2/v1/ipad"
 	"github.com/joho/godotenv"
@@ -21,7 +20,7 @@ func main() {
 		log.Fatalf("Error loading .env file.")
 	}
 
-	database.ConnectDatabase(database.Config())
+	//database.ConnectDatabase(database.Config())
 
 	e := echo.Engine()
 

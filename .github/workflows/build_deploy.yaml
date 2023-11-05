@@ -13,6 +13,7 @@ jobs:
       - name: Set Tag in env variable
         run: |
           echo "sha_short=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
+          echo "${{ secrets.DOCKER_USER }}/${{ secrets.REPOSITORY_NAME }}" > ./backend/APP_NAME
           echo "${{ secrets.DOCKER_USER }}/${{ secrets.REPOSITORY_NAME }}" > APP_NAME
           echo "$GITHUB_SHA" > TAG
       - name: Build the Docker image

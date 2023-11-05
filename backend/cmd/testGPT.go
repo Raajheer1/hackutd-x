@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"sync"
+
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/config"
 	"github.com/Raajheer1/hackutd-x/m/v2/pkg/gpt"
 	"github.com/joho/godotenv"
-	"log"
-	"sync"
 )
 
 type container struct {
@@ -22,19 +23,54 @@ func main() {
 	fmt.Println("Im online...")
 
 	config.Active = config.ActiveConfig{
+		//company that is going middle-of-the-road well
 		CompanyName:        "Bob's Electrician Shop",
 		Industry:           "Electrician",
 		City:               "Dallas",
-		Revenue:            float64(1000000),
-		Cogs:               float64(500000),
-		Depreciation:       float64(100000),
-		LongTermAssets:     float64(100000),
-		ShortTermAssets:    float64(100000),
-		LongTermLiability:  float64(100000),
-		ShortTermLiability: float64(100000),
-		OperatingExpense:   float64(100000),
+		Revenue:            float64(900000),
+		Cogs:               float64(400000),
+		Depreciation:       float64(30000),
+		LongTermAssets:     float64(150000),
+		ShortTermAssets:    float64(280000),
+		LongTermLiability:  float64(70000),
+		ShortTermLiability: float64(110000),
+		OperatingExpense:   float64(250000),
 		RetainedEarnings:   float64(100000),
 		YearsInBusiness:    uint(5),
+	}
+
+	config.Active = config.ActiveConfig{
+		//company that is doing really bad
+		CompanyName:        "Joe's Plumbing",
+		Industry:           "Plumbing",
+		City:               "Richardson",
+		Revenue:            float64(400000),
+		Cogs:               float64(250000),
+		Depreciation:       float64(20000),
+		LongTermAssets:     float64(50000),
+		ShortTermAssets:    float64(100000),
+		LongTermLiability:  float64(80000),
+		ShortTermLiability: float64(120000),
+		OperatingExpense:   float64(300000),
+		RetainedEarnings:   float64(-50000),
+		YearsInBusiness:    uint(3),
+	}
+
+	config.Active = config.ActiveConfig{
+		//company that is doing exceptional
+		CompanyName:        "Sue's Bakery",
+		Industry:           "Bakery",
+		City:               "Southlake",
+		Revenue:            float64(800000),
+		Cogs:               float64(300000),
+		Depreciation:       float64(15000),
+		LongTermAssets:     float64(150000),
+		ShortTermAssets:    float64(250000),
+		LongTermLiability:  float64(50000),
+		ShortTermLiability: float64(100000),
+		OperatingExpense:   float64(200000),
+		RetainedEarnings:   float64(100000),
+		YearsInBusiness:    uint(7),
 	}
 
 	//prompt := fmt.Sprintf("Company: %s, Industry: %s, City: %s", config.Active.CompanyName, config.Active.Industry, config.Active.City)

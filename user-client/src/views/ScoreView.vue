@@ -34,12 +34,33 @@
         </div>
       </div>
       <!-- SCORE CHART -->
-      <SpeedoChart />
-    </div>
+      <canvas ref="scoreChart" id="score-chart"></canvas>
 
+      <!-- Legend -->
+      <div class="flex fixed top-[305px]">
+        <div class="flex mx-[5px]">
+          <div
+            class="w-[20px] h-[20px] mr-[3px] bg-clr-good rounded-[4px]"
+          ></div>
+          <div>Bankruptcy</div>
+        </div>
+        <div class="flex mx-[5px]">
+          <div
+            class="w-[20px] h-[20px] mr-[3px] bg-clr-mid rounded-[4px]"
+          ></div>
+          <div>Baseline</div>
+        </div>
+        <div class="flex mx-[5px]">
+          <div
+            class="w-[20px] h-[20px] mr-[3px] bg-clr-bad rounded-[4px]"
+          ></div>
+          <div>Recs</div>
+        </div>
+      </div>
+    </div>
     <!-- ACTIONS -->
     <div
-      class="px-[10px] h-fit fixed top-[310px] left-0 h-[589px] bg-app-bg-clr"
+      class="px-[10px] h-fit fixed top-[340px] left-0 h-[589px] bg-app-bg-clr"
     >
       <div
         class="text-[45px] drop-shadow-md ml-[20px] -mb-[8px]"
@@ -57,7 +78,8 @@
         <div
           v-if="
             reccomendationsLoading ||
-            activeReccomendations.length === 0
+            activeReccomendations.length === 0 ||
+            activeConfig.riskValue == -1
           "
           class="h-[124px] w-[370px] flex"
         >
@@ -78,7 +100,6 @@
       </div>
     </div>
   </div>
-
   <!-- CHAT -->
   <Transition name="chat-slide-left">
     <ChatView
@@ -99,8 +120,8 @@
   </Transition>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-import SpeedoChart from "@/components/SpeedoChart.vue";
+import { ref, watch, onMounted } from "vue";
+import Chart from "chart.js/auto";
 import ActionItem from "@/components/ActionItem.vue";
 import ChatView from "@/views/ChatView.vue";
 import DetailsModal from "@/components/DetailsModal.vue";
@@ -122,6 +143,9 @@ const activeConfig = ref<CompanyConfig>({} as CompanyConfig);
 const activeReccomendations = ref<ActionItemType[]>(
   [] as ActionItemType[]
 );
+const weightedBankruptcy = ref(0);
+const weightedBaseline = ref(0);
+const weightedRecs = ref(0);
 const scoreLoading = ref(false);
 const reccomendationsLoading = ref(false);
 async function pollActiveConfig() {
@@ -132,8 +156,15 @@ async function pollActiveConfig() {
   const data = await response.json();
   //If polling returns a new company name, the config has changed
   if (data.riskValue !== activeConfig.value.riskValue) {
-    // console.log("New active config", data);
+    console.log("New active config", data);
     scoreLoading.value = true;
+    activeConfig.value = data;
+    weightedBankruptcy.value =
+      activeConfig.value.weightedBankruptcy || 0;
+    weightedBaseline.value =
+      activeConfig.value.weightedBaseline || 0;
+    weightedRecs.value = activeConfig.value.weightedRecs || 0;
+
     reccomendationsLoading.value = true;
     const reccomendationsResponse = await fetch(
       import.meta.env.VITE_API_URL + "/v1/recommendations"
@@ -170,7 +201,6 @@ async function pollActiveConfig() {
       activeReccomendations.value = reccomendedActions;
     }, 1000);
   }
-  activeConfig.value = data;
   setTimeout(pollActiveConfig, 1000);
   return data;
 }
@@ -225,6 +255,57 @@ function closeModal() {
   console.log("close modal");
   showDetailsModal.value = false;
 }
+const data = {
+  labels: ["Red", "Yellow", "Blue"],
+  datasets: [
+    {
+      label: "My First Dataset",
+      data: [
+        weightedBankruptcy.value,
+        weightedBaseline.value,
+        weightedRecs.value,
+      ],
+      backgroundColor: ["#f57fce", "#f5ed7f", "#7fcef5"],
+      borderColor: "#faf9f6",
+      borderRadius: 10,
+      borderWidth: 3,
+      radius: 150,
+      cutout: 140,
+      hoverOffset: 4,
+      rotation: 125,
+      circumference: 110,
+    },
+  ],
+};
+let ctx: HTMLCanvasElement;
+let chart: Chart<"doughnut", number[], string>;
+onMounted(() => {
+  ctx = document.getElementById(
+    "score-chart"
+  ) as HTMLCanvasElement;
+  chart = new Chart(ctx, {
+    type: "doughnut",
+    data: data,
+    options: {
+      plugins: {
+        legend: {
+          display: false,
+          position: "bottom",
+          align: "center",
+        },
+      },
+    },
+  });
+});
+watch(weightedBankruptcy, () => {
+  console.log("Updating chart");
+  chart.data.datasets[0].data = [
+    weightedBankruptcy.value,
+    weightedBaseline.value,
+    weightedRecs.value,
+  ];
+  chart.update();
+});
 </script>
 
 <style scoped>

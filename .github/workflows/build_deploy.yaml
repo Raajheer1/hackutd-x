@@ -12,12 +12,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set Tag in env variable
         run: |
-          cd backend
           echo "sha_short=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
           echo "${{ secrets.DOCKER_USER }}/${{ secrets.REPOSITORY_NAME }}" > APP_NAME
           echo "$GITHUB_SHA" > TAG
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag $(cat APP_NAME):${{ github.sha }}
+        run: |
+          cd backend
+          docker build . --file Dockerfile --tag $(cat APP_NAME):${{ github.sha }}
       - name: Tag the image to commit
         run: docker tag $(cat APP_NAME):${{ github.sha }} $(cat APP_NAME):${{ github.sha }}
       - name: Docker Login

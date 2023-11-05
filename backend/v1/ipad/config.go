@@ -93,10 +93,13 @@ func setActiveConfig(c echo.Context) error {
 // For the user show the current config
 
 type overall struct {
-	RiskValue      float64             `json:"riskValue"`
-	ZValue         float64             `json:"zValue"`
-	BankruptcyRisk string              `json:"bankruptcyRisk"`
-	Active         config.ActiveConfig `json:"active"`
+	RiskValue          float64             `json:"riskValue"`
+	ZValue             float64             `json:"zValue"`
+	BankruptcyRisk     string              `json:"bankruptcyRisk"`
+	WeightedBaseline   float64             `json:"weightedBaseline"`
+	WeightedRecs       float64             `json:"weightedRecs"`
+	WeightedBankruptcy float64             `json:"weightedBankruptcy"`
+	Active             config.ActiveConfig `json:"active"`
 }
 
 func getActiveConfig(c echo.Context) error {
@@ -123,6 +126,10 @@ func getActiveConfig(c echo.Context) error {
 			})
 		}
 	}
+
+	o.WeightedBankruptcy = data.BankruptcyWeight
+	o.WeightedBaseline = data.BaselineWeight
+	o.WeightedRecs = data.RecWeight
 
 	return c.JSON(http.StatusOK, o)
 }

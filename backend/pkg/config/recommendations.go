@@ -28,7 +28,7 @@ var RecTypes []RecommendationTypes = []RecommendationTypes{
 	"Finance",
 	"Employee Training",
 	"Legal",
-	"Security Measures",
+	"Tax",
 }
 
 var RiskFactorScores map[string]float64 = map[string]float64{
@@ -37,5 +37,5 @@ var RiskFactorScores map[string]float64 = map[string]float64{
 	"Finance":           2,
 	"Employee Training": 2,
 	"Legal":             2,
-	"Security Measures": 2,
+	"Tax":               2,
 }

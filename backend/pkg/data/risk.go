@@ -32,11 +32,14 @@ type Task struct {
 	Score  float64
 }
 
+var BaselineWeight float64
+var RecWeight float64
+var BankruptcyWeight float64
+
 func RiskScoreFormula(baseline float64, risks []Risk, tasks []Task) float64 {
 	fmt.Println("Calculating risk score...")
 	var riskScore float64
 	for _, risk := range risks {
-		fmt.Printf("Risk: %s, Weight: %f, Score: %f\n", risk.Name, risk.Weight, risk.Score)
 		if risk.Name == "Finance" {
 			risk.Score += risk.Weight * InvertZ(CalculateZ()) / 2.0
 		} else {
@@ -50,7 +53,11 @@ func RiskScoreFormula(baseline float64, risks []Risk, tasks []Task) float64 {
 
 	limitedZScore := InvertZ(CalculateZ()) * 25
 	fmt.Printf("Baseline: %f, RiskScore: %f, TaskScore: %f, ZScore: %f\n", baseline*50, riskScore, taskScore, limitedZScore)
-	r := 0.25*(baseline*50) + 0.25*(riskScore-taskScore) - 0.50*(limitedZScore)
+	r := 0.25*(baseline*50) + 0.25*2*(riskScore-taskScore) + 0.50*(limitedZScore)
+
+	BaselineWeight = baseline * 50
+	RecWeight = (riskScore - taskScore) * 2
+	BankruptcyWeight = limitedZScore
 
 	if r <= 0 {
 		return rand.Float64() * 10

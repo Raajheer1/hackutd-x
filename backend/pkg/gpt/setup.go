@@ -78,7 +78,7 @@ func GetBaselineRisk(age uint, industry string) BaselineRiskResponse {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleSystem,
-					Content: "You are a risk assessor assistant API that returns JSON ONLY. I am going to give you a company's age and industry and you need to provide me a baseline risk factor on a 0-2 scale with 2 being the riskiest. Return a JSON with the key: 'baseline_risk'. Return JSON only.",
+					Content: "You are a risk assessor assistant API that returns JSON ONLY. I am going to give you a company's age and industry and you need to provide me a float baseline risk factor on a 0.1 - 1.9 scale with 2 being the riskiest. Return a JSON with the key: 'baseline_risk'. Return JSON only.",
 				},
 				{
 					Role:    openai.ChatMessageRoleUser,
@@ -96,6 +96,7 @@ func GetBaselineRisk(age uint, industry string) BaselineRiskResponse {
 	}
 
 	response := resp.Choices[0].Message.Content
+	fmt.Println(response)
 	var baselineRisk BaselineRiskResponse
 	err = json.Unmarshal([]byte(response), &baselineRisk)
 	if err != nil {

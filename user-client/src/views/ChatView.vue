@@ -36,10 +36,11 @@
         :class="{
           'bg-clr-good-tint-50':
             props.actionItem.type == 'default' ||
-            props.actionItem.type == 'financial' ||
+            props.actionItem.type == 'finance' ||
             props.actionItem.type == 'saftey',
           'bg-clr-mid': props.actionItem.type == 'tax',
-          'bg-clr-bad': props.actionItem.type == 'legal',
+          'bg-clr-bad-tint-20':
+            props.actionItem.type == 'legal',
         }"
       >
         <!-- Profile picture and text over reccomendation display -->
@@ -76,7 +77,7 @@
               <BankIcon
                 :size="35"
                 color="white"
-                v-if="props.actionItem.type == 'financial'"
+                v-if="props.actionItem.type == 'finance'"
               />
               <ConeIcon
                 :size="33"
@@ -98,7 +99,7 @@
             :class="{
               'bg-clr-good-tint-10':
                 props.actionItem.type == 'default' ||
-                props.actionItem.type == 'financial' ||
+                props.actionItem.type == 'finance' ||
                 props.actionItem.type == 'saftey',
               'bg-clr-mid-shade-10':
                 props.actionItem.type == 'tax',
@@ -107,12 +108,16 @@
           >
             <p>
               {{
-                props.actionItem.details.length >
-                maxReccomendationLength
-                  ? props.actionItem.details.slice(
-                      0,
-                      maxReccomendationLength
-                    ) + "..."
+                (
+                  props.actionItem.title +
+                  " - " +
+                  props.actionItem.details
+                ).length > maxReccomendationLength
+                  ? (
+                      props.actionItem.title +
+                      " - " +
+                      props.actionItem.details
+                    ).slice(0, maxReccomendationLength) + "..."
                   : props.actionItem.details
               }}
             </p>
@@ -137,16 +142,18 @@
       </div>
     </div>
     <!-- Chat Input -->
-    <div class="flex items-center justify-center w-[100vw]">
+    <div
+      class="flex items-center justify-center w-[100vw] fixed bottom-[30px]"
+    >
       <!-- Input -->
       <form
-        class="p-0 m-0 border-0 w-[100%]"
+        class="h-[50px] w-[95%] m-auto"
         @submit="sendMessage"
       >
         <input
           v-model="chatInput"
           type="text"
-          class="flex-1 rounded-xl p-[15px] bg-gray-200 text-[20px] fixed bottom-0 w-[100%]"
+          class="flex-1 rounded-xl p-[15px] bg-gray-200 text-[20px] w-[100%]"
           placeholder="Type a message..."
         />
       </form>
@@ -165,7 +172,7 @@ import AssistantMessage from "@/components/AssistantMessage.vue";
 import { defineProps, ref } from "vue";
 import { ChatMessage, ActionItemType } from "@/types";
 
-const maxReccomendationLength = 70;
+const maxReccomendationLength = 80;
 const props = defineProps({
   actionItem: {
     type: Object as () => ActionItemType,
@@ -182,6 +189,8 @@ const chatMessages = ref<ChatMessage[]>([
     role: "assistant",
     content:
       "Lets talk about your reccomendation: " +
+      props.actionItem.title +
+      " - " +
       props.actionItem.details,
   },
 ]);

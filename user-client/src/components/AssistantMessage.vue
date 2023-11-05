@@ -4,7 +4,7 @@
     :class="{
       'bg-clr-good-tint-50':
         props.type == 'default' ||
-        props.type == 'financial' ||
+        props.type == 'finance' ||
         props.type == 'saftey',
       'bg-clr-mid': props.type == 'tax',
       'bg-clr-bad': props.type == 'legal',
@@ -38,7 +38,7 @@
         <BankIcon
           :size="35"
           color="white"
-          v-if="props.type == 'financial'"
+          v-if="props.type == 'finance'"
         />
         <ConeIcon
           :size="33"

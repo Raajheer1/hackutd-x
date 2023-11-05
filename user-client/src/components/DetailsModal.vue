@@ -4,7 +4,7 @@
     :class="{
       'from-clr-good-shade-10':
         props.actionItem.type == 'default' ||
-        props.actionItem.type == 'financial' ||
+        props.actionItem.type == 'finance' ||
         props.actionItem.type == 'saftey',
       'from-clr-mid': props.actionItem.type == 'tax',
       'from-clr-bad-tint-30': props.actionItem.type == 'legal',
@@ -42,7 +42,7 @@
         <BankIcon
           :size="35"
           color="white"
-          v-if="props.actionItem.type == 'financial'"
+          v-if="props.actionItem.type == 'finance'"
         />
         <ConeIcon
           :size="45"
@@ -56,15 +56,17 @@
           {{ props.actionItem.title }}
         </p>
       </div>
-      <!-- Close button -->
+      <!-- Close button
       <CloseIcon
         :size="50"
         color="black"
         class="ml-auto mt-[11px] -mr-[6px]"
-      />
+      /> -->
     </div>
     <!-- Details -->
-    <p class="px-[15px]">{{ props.actionItem.details }}</p>
+    <p class="px-[25px] text-[20px]">
+      {{ props.actionItem.details }}
+    </p>
     <!-- Buttons -->
     <div class="flex items-center mt-[60px]">
       <div
@@ -93,7 +95,6 @@ import GavelIcon from "@/components/icons/GavelIcon.vue";
 import BankIcon from "@/components/icons/BankIcon.vue";
 import ConeIcon from "@/components/icons/ConeIcon.vue";
 import ArchiveIcon from "@/components/icons/ArchiveIcon.vue";
-import CloseIcon from "@/components/icons/CloseIcon.vue";
 import CheckIcon from "@/components/icons/CheckIcon.vue";
 import ChatIcon from "@/components/icons/ChatIcon.vue";
 import { ActionItemType } from "@/types";
@@ -116,7 +117,7 @@ const emits = defineEmits([
 const buttonColor = computed(() => {
   if (
     props.actionItem.type == "default" ||
-    props.actionItem.type == "financial" ||
+    props.actionItem.type == "finance" ||
     props.actionItem.type == "saftey"
   ) {
     return "bg-clr-good";

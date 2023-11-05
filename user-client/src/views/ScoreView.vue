@@ -20,10 +20,9 @@
             class="text-[110px] -mb-[35px] drop-shadow-md text-center"
           >
             {{
-              100 -
-                parseFloat(
-                  activeConfig.zValue?.toPrecision(2)
-                ) || ""
+              activeConfig.riskValue
+                ? (100 - activeConfig.riskValue).toFixed(0)
+                : ""
             }}
           </div>
           <div class="text-[20px] drop-shadow-md text-center">
@@ -40,9 +39,14 @@
       class="px-[10px] h-fit fixed top-[310px] left-0 h-[589px] bg-app-bg-clr"
     >
       <div
-        class="text-[45px] drop-shadow-md ml-[20px] mb-[5px]"
+        class="text-[45px] drop-shadow-md ml-[20px] -mb-[8px]"
       >
         Actions
+      </div>
+      <div
+        class="text-[18px] drop-shadow-md ml-[21px] mb-[5px]"
+      >
+        Do these to increase your score
       </div>
       <div class="flex flex-col h-[550px] overflow-y-auto">
         <div
@@ -122,11 +126,8 @@ async function pollActiveConfig() {
   );
   const data = await response.json();
   //If polling returns a new company name, the config has changed
-  if (
-    data.active?.companyName !==
-    activeConfig.value.active?.companyName
-  ) {
-    console.log("New active config", data);
+  if (data.riskValue !== activeConfig.value.riskValue) {
+    // console.log("New active config", data);
     scoreLoading.value = true;
     reccomendationsLoading.value = true;
     const reccomendationsResponse = await fetch(
@@ -185,9 +186,10 @@ async function completeAction(action: ActionItemType) {
   console.log("complete action", action);
   //Remove reccomendation from the UI immediately
   activeReccomendations.value =
-    activeReccomendations.value.filter(
-      (reccomendation) => reccomendation.id !== action.id
-    );
+    activeReccomendations.value.filter((reccomendation) => {
+      if (reccomendation === undefined) return;
+      reccomendation.details !== action.details;
+    });
   //Send request to complete reccomendation
   const res = await fetch(
     import.meta.env.VITE_API_URL + "/v1/toggle-recommendation",

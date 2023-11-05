@@ -41,6 +41,8 @@ type container struct {
 	recs []config.Recommendation
 }
 
+var Loading bool = false
+
 func setActiveConfig(c echo.Context) error {
 	var req config.ActiveConfig
 	if err := c.Bind(&req); err != nil {
@@ -48,6 +50,8 @@ func setActiveConfig(c echo.Context) error {
 			Error: err.Error(),
 		})
 	}
+
+	Loading = true
 
 	config.Active = req
 
@@ -84,6 +88,8 @@ func setActiveConfig(c echo.Context) error {
 	config.Recs = cont.recs
 	data.Weights = nil
 	data.BaselineRisk = 0
+
+	Loading = false
 
 	return c.JSON(http.StatusOK, dto.MessageResponse{
 		Message: "Active config updated successfully",
@@ -130,6 +136,10 @@ func getActiveConfig(c echo.Context) error {
 	o.WeightedBankruptcy = data.BankruptcyWeight
 	o.WeightedBaseline = data.BaselineWeight
 	o.WeightedRecs = data.RecWeight
+
+	if Loading {
+		o.RiskValue = -1
+	}
 
 	return c.JSON(http.StatusOK, o)
 }

@@ -102,6 +102,13 @@ import {
   Reccomendation,
 } from "@/types";
 
+const validRecTypes = [
+  "default",
+  "tax",
+  "legal",
+  "finance",
+  "saftey",
+];
 const activeConfig = ref<CompanyConfig>({} as CompanyConfig);
 const activeReccomendations = ref<ActionItemType[]>(
   [] as ActionItemType[]
@@ -135,6 +142,12 @@ async function pollActiveConfig() {
         reccomendationsData.map(
           (reccomendation: Reccomendation) => {
             if (reccomendation.completed) return;
+            if (
+              !validRecTypes.includes(
+                reccomendation.type.toLocaleLowerCase()
+              )
+            )
+              return;
             const action: ActionItemType = {
               type: reccomendation.type.toLocaleLowerCase(),
               title: reccomendation.title,
